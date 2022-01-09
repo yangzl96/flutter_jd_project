@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jd_project/constants/pageList.dart';
+import 'package:jd_project/constants/index.dart';
 
 class Tabs extends StatefulWidget {
   const Tabs({Key? key}) : super(key: key);
