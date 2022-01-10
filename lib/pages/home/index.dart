@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
 import 'package:flutter/material.dart';
 import 'package:jd_project/utils/autoSize.dart';
 import 'package:jd_project/widgets/swiper/index.dart';
@@ -34,6 +36,23 @@ class _HomePageState extends State<HomePage> {
           height: AutoSize.h(20),
         ),
         const TitleWidget('热门推荐'),
+        Container(
+          // 这里的数值不使用autosize是因为下面要计算每一个item的宽度
+          // 用到的getScreenWidth单位和这里的单位是一样的，所以好计算
+          padding: EdgeInsets.all(10),
+          child: Wrap(
+            runSpacing: 10,
+            spacing: 10,
+            children: [
+              _recProductItemWidget(),
+              _recProductItemWidget(),
+              _recProductItemWidget(),
+              _recProductItemWidget(),
+              _recProductItemWidget(),
+              _recProductItemWidget()
+            ],
+          ),
+        )
       ],
     );
   }
@@ -66,6 +85,60 @@ class _HomePageState extends State<HomePage> {
               ],
             );
           }),
+    );
+  }
+
+  // 推荐商品
+  Widget _recProductItemWidget() {
+    // 左右pading + 中间
+    var itemWidth = (AutoSize.getScreenWidth() - 20 - 10) / 2;
+    return Container(
+      padding: EdgeInsets.all(10),
+      width: itemWidth,
+      decoration: BoxDecoration(
+          border:
+              Border.all(width: 1, color: Color.fromRGBO(233, 233, 233, 0.9))),
+      child: Column(
+        children: [
+          Container(
+            width: double.infinity,
+            child: AspectRatio(
+              aspectRatio: 1 / 1, //防止服务器返回的图片大小不一致，导致高度不一致的问题
+              child:
+                  Image.network('https://itying.com/images/flutter/list1.jpg'),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: AutoSize.h(20)),
+            child: Text('2021夏季新款气质高贵洋气阔太太女人味中长款宽松大码',
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: Colors.black54)),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: AutoSize.h(20)),
+            child: Stack(
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    '￥123',
+                    style: TextStyle(color: Colors.red, fontSize: 16),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Text('￥56',
+                      style: TextStyle(
+                          color: Colors.black54,
+                          fontSize: 14,
+                          decoration: TextDecoration.lineThrough)),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 }
