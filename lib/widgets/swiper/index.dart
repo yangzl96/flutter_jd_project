@@ -1,10 +1,11 @@
-// ignore_for_file: unnecessary_new, avoid_unnecessary_containers, prefer_const_constructors, must_be_immutable
+// ignore_for_file: unnecessary_new, avoid_unnecessary_containers, prefer_const_constructors, must_be_immutable, prefer_const_constructors_in_immutables
 
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
+import 'package:jd_project/config/index.dart';
 
 class SwiperWidget extends StatelessWidget {
-  final List<Map> swiperList;
+  final List<dynamic> swiperList;
   SwiperWidget(this.swiperList, {Key? key}) : super(key: key);
 
   @override
@@ -17,8 +18,10 @@ class SwiperWidget extends StatelessWidget {
           // 解决：ScrollController not attached to any scroll views.
           key: UniqueKey(),
           itemBuilder: (BuildContext context, int index) {
+            String pic = swiperList[index].pic;
+            pic = Config.domain + pic.replaceAll('\\', '/');
             return Image.network(
-              swiperList[index]['url'],
+              "${pic}",
               fit: BoxFit.fill,
             );
           },

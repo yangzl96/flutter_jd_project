@@ -9,22 +9,41 @@ class Tabs extends StatefulWidget {
 }
 
 class _TabsState extends State<Tabs> {
+  PageController? _pageController;
   int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: _currentIndex);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(''),
       ),
-      body: pageList[_currentIndex],
+
+      // 方案一：IndexedStack：实现状态保存 原来直接是 pageList[_currentIndex]
+      // 会导致每次切换页面都在加载数据 但是这个方案也存在问题
+      // 就是一次会加载四个页面 并且如果购物车的数据需要更新？就没有办法了
+      // 方案二：AutomaticKeepAliveClientMixin
+      // 需要使用pageView将页面包裹起来才可以使用
+
+      body: PageView(
+        controller: _pageController,
+        children: pageList,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         selectedFontSize: 12,
         selectedItemColor: Colors.red,
         currentIndex: _currentIndex,
-        onTap: (value) {
+        onTap: (index) {
           setState(() {
-            _currentIndex = value;
+            _currentIndex = index;
+            _pageController!.jumpToPage(_currentIndex);
           });
         },
         items: const [
