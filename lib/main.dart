@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:jd_project/routers/index.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jd_project/utils/color.dart';
 
 void main() {
   runApp(MyApp());
@@ -22,8 +23,9 @@ class _MyAppState extends State<MyApp> {
         designSize: const Size(750, 1334), //设计稿的宽度和高度
         minTextAdapt: true,
         builder: () => MaterialApp(
-              initialRoute: '/',
-              onGenerateRoute: onGenerateRoute,
-            ));
+            debugShowCheckedModeBanner: false,
+            initialRoute: '/',
+            onGenerateRoute: onGenerateRoute,
+            theme: ThemeData(primarySwatch: white)));
   }
 }

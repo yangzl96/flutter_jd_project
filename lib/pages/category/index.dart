@@ -135,19 +135,25 @@ class _CategoryPageState extends State<CategoryPage>
                 itemBuilder: (ctx, index) {
                   String pic = _rightCateList[index].pic;
                   pic = Config.domain + pic.replaceAll('\\', '/');
-                  return Container(
-                    child: Column(
-                      children: [
-                        AspectRatio(
-                            aspectRatio: 1 / 1,
-                            child: Image.network(pic, fit: BoxFit.cover)),
-                        Container(
-                            padding: EdgeInsets.only(top: AutoSize.h(5)),
-                            height: AutoSize.h(33),
-                            child: Text(
-                              '${_rightCateList[index].title}',
-                            ))
-                      ],
+                  return InkWell(
+                    onTap: () {
+                      Navigator.pushNamed(context, '/productList',
+                          arguments: {"cid": _rightCateList[index].id});
+                    },
+                    child: Container(
+                      child: Column(
+                        children: [
+                          AspectRatio(
+                              aspectRatio: 1 / 1,
+                              child: Image.network(pic, fit: BoxFit.cover)),
+                          Container(
+                              padding: EdgeInsets.only(top: AutoSize.h(5)),
+                              height: AutoSize.h(33),
+                              child: Text(
+                                '${_rightCateList[index].title}',
+                              ))
+                        ],
+                      ),
                     ),
                   );
                 }),

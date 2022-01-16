@@ -1,12 +1,14 @@
 // ignore_for_file: prefer_function_declarations_over_variables
 import 'package:flutter/material.dart';
 import 'package:jd_project/pages/search/index.dart';
+import 'package:jd_project/widgets/productList/index.dart';
 import 'package:jd_project/widgets/tabs/index.dart';
 
 // 配置路由
 final routes = {
   '/': (context) => const Tabs(),
   '/search': (context) => SearchPage(),
+  '/productList': (context, {arguments}) => ProductList(arguments: arguments)
 };
 
 // 固定写法

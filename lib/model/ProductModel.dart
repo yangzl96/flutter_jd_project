@@ -23,8 +23,8 @@ class ProductItemModel {
   String? id;
   String? title;
   String? cid;
-  int? price;
-  String? oldPrice;
+  Object? price;
+  Object? oldPrice;
   String? pic;
   String? sPic;
 
