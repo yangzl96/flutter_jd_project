@@ -1,10 +1,11 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_final_fields
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:jd_project/config/index.dart';
 import 'package:jd_project/model/ProductModel.dart';
 import 'package:jd_project/utils/autoSize.dart';
+import 'package:jd_project/utils/searchUtils.dart';
 import 'package:jd_project/widgets/Loading/index.dart';
 
 class ProductList extends StatefulWidget {
@@ -43,6 +44,11 @@ class _ProductListState extends State<ProductList> {
   // 上拉分页
   ScrollController _scrollController = ScrollController(); //listView的控制器
 
+  //配置search搜索框的值
+  var _initKeywordsController = new TextEditingController();
+
+  var _keywords;
+
   /*二级导航数据*/
   final List _subHeaderList = [
     {
@@ -62,6 +68,11 @@ class _ProductListState extends State<ProductList> {
   @override
   void initState() {
     super.initState();
+    _keywords = widget.arguments!["keywords"];
+    //给search框框赋值
+    if (_keywords != null) {
+      _initKeywordsController.text = _keywords!; //类型断言
+    }
     _getProductListData();
     // 监听滚动
     _scrollController.addListener(() {
@@ -79,13 +90,62 @@ class _ProductListState extends State<ProductList> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: _scaffoldKey,
-        appBar: AppBar(title: Text('商品列表'), actions: [Text('')]),
+        appBar: AppBar(
+            leading: IconButton(
+              //注意：新版本Flutter中加入Drawer后会替换默认的返回
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            title: Container(
+              child: TextField(
+                controller: _initKeywordsController,
+                autofocus: false,
+                decoration: InputDecoration(
+                    contentPadding: EdgeInsets.only(
+                        top: AutoSize.h(35),
+                        left: AutoSize.w(28),
+                        right: AutoSize.w(20)),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(26),
+                        borderSide: BorderSide.none)),
+                onChanged: (val) {
+                  setState(() {
+                    _keywords = val;
+                  });
+                },
+              ),
+              height: AutoSize.h(60),
+              decoration: BoxDecoration(
+                  color: Color.fromRGBO(233, 233, 233, 0.8),
+                  borderRadius: BorderRadius.circular(26)),
+            ),
+            actions: [
+              InkWell(
+                child: SizedBox(
+                  height: AutoSize.h(60),
+                  width: AutoSize.w(80),
+                  child: Row(
+                    children: [Text('搜索')],
+                  ),
+                ),
+                onTap: () async{
+                   await SearchUtils.setHistoryData(_keywords);
+                  _subHeaderChange(1);
+                },
+              )
+            ]),
         endDrawer: Drawer(
           child: Container(child: Text('筛选')),
         ),
-        body: Stack(
-          children: [_productListWidget(), _subHeader()],
-        ));
+        body: _hasData
+            ? Stack(
+                children: [_productListWidget(), _subHeader()],
+              )
+            : Center(
+                child: Text('没有您要查找的数据'),
+              ));
   }
 
   // 筛选导航
@@ -271,10 +331,25 @@ class _ProductListState extends State<ProductList> {
     setState(() {
       flag = false;
     });
-    var api =
-        '${Config.domain}api/plist?cid=${widget.arguments!["cid"]}&page=${_page}&sort=${_sort}&pageSize=${_pageSize}';
+    var api;
+    if (_keywords == null) {
+      api =
+          '${Config.domain}api/plist?cid=${widget.arguments!["cid"]}&page=${_page}&sort=${_sort}&pageSize=${_pageSize}';
+    } else {
+      api =
+          '${Config.domain}api/plist?search=${_keywords}&page=${_page}&sort=${_sort}&pageSize=${_pageSize}';
+    }
+    print(api);
     var result = await Dio().get(api);
     var productList = ProductModel.fromJson(result.data);
+    //判断是否有搜索数据
+    if (productList.result!.isEmpty && _page == 1) {
+      setState(() {
+        _hasData = false;
+      });
+    } else {
+      _hasData = true;
+    }
     if (productList.result!.length < _pageSize) {
       setState(() {
         _productList.addAll(productList.result ?? []);

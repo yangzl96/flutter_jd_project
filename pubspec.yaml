@@ -37,6 +37,8 @@ dependencies:
   flutter_swiper_null_safety: ^1.0.2
   flutter_screenutil: ^5.0.2
   dio: ^4.0.0
+  shared_preferences: ^2.0.6
+
 
 dev_dependencies:
   flutter_test:

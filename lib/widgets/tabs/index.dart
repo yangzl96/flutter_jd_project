@@ -26,6 +26,7 @@ class _TabsState extends State<Tabs> {
     return Scaffold(
       appBar: _currentIndex != 3
           ? AppBar(
+            // elevation: 0,
               leading: IconButton(
                   icon: Icon(
                     Icons.center_focus_weak,
