@@ -16,13 +16,11 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
-  
+class _HomePageState extends State<HomePage>
+    with AutomaticKeepAliveClientMixin {
   List _focusData = []; //轮播图
   List _hotList = []; //猜你数据
   List _hotRecommendList = []; // 热门推荐
-
-
 
   @override
   bool get wantKeepAlive => true;
@@ -110,51 +108,57 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
             //图片
             String sPic = value.sPic;
             sPic = Config.domain + sPic.replaceAll('\\', '/');
-            return Container(
-              padding: EdgeInsets.all(10),
-              width: itemWidth,
-              decoration: BoxDecoration(
-                  border: Border.all(
-                      width: 1, color: Color.fromRGBO(233, 233, 233, 0.9))),
-              child: Column(
-                children: [
-                  Container(
-                    width: double.infinity,
-                    child: AspectRatio(
-                      aspectRatio: 1 / 1, //防止服务器返回的图片大小不一致，导致高度不一致的问题
-                      child: Image.network(sPic),
+            return InkWell(
+              onTap: () {
+                Navigator.of(context)
+                    .pushNamed('/productDetail', arguments: {"id": value.id});
+              },
+              child: Container(
+                padding: EdgeInsets.all(10),
+                width: itemWidth,
+                decoration: BoxDecoration(
+                    border: Border.all(
+                        width: 1, color: Color.fromRGBO(233, 233, 233, 0.9))),
+                child: Column(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      child: AspectRatio(
+                        aspectRatio: 1 / 1, //防止服务器返回的图片大小不一致，导致高度不一致的问题
+                        child: Image.network(sPic),
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: AutoSize.h(20)),
-                    child: Text('${value.title}',
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: Colors.black54)),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: AutoSize.h(20)),
-                    child: Stack(
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            '¥${value.price}',
-                            style: TextStyle(color: Colors.red, fontSize: 16),
+                    Padding(
+                      padding: EdgeInsets.only(top: AutoSize.h(20)),
+                      child: Text('${value.title}',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: Colors.black54)),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: AutoSize.h(20)),
+                      child: Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              '¥${value.price}',
+                              style: TextStyle(color: Colors.red, fontSize: 16),
+                            ),
                           ),
-                        ),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: Text('¥${value.oldPrice}',
-                              style: TextStyle(
-                                  color: Colors.black54,
-                                  fontSize: 14,
-                                  decoration: TextDecoration.lineThrough)),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Text('¥${value.oldPrice}',
+                                style: TextStyle(
+                                    color: Colors.black54,
+                                    fontSize: 14,
+                                    decoration: TextDecoration.lineThrough)),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
             );
           }).toList()),
