@@ -1,38 +1,59 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace, prefer_const_constructors_in_immutables
 
 import 'package:flutter/material.dart';
+import 'package:jd_project/config/index.dart';
 import 'package:jd_project/utils/autoSize.dart';
 import 'package:jd_project/widgets/button/index.dart';
+import 'package:jd_project/model/ProductContentModel.dart';
 
 class ProductDetailMain extends StatefulWidget {
-  ProductDetailMain({Key? key}) : super(key: key);
+  final List _productContentList;
+  ProductDetailMain(this._productContentList, {Key? key}) : super(key: key);
 
   @override
   _ProductDetailMainState createState() => _ProductDetailMainState();
 }
 
 class _ProductDetailMainState extends State<ProductDetailMain> {
+  ProductContentitem? _productContent;
+  // 已选 类别 属性
+  List _attr = [];
+
+  // 选择的值
+  String _selectedValue = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _productContent = widget._productContentList[0];
+    _attr = _productContent!.attr;
+    _initAttr();
+  }
+
   @override
   Widget build(BuildContext context) {
+    //处理图片
+    String pic = Config.domain + _productContent!.pic;
+    pic = pic.replaceAll('\\', '/');
     return Container(
       padding: const EdgeInsets.all(10),
       child: ListView(
         children: [
           AspectRatio(
-              aspectRatio: 16 / 9,
+              aspectRatio: 16 / 12,
               child: Image.network(
-                'https://www.itying.com/images/flutter/p1.jpg',
+                pic,
                 fit: BoxFit.cover,
               )),
           Container(
               padding: EdgeInsets.only(top: 10),
-              child: Text('联想阿达是被盗号ad啊大安市啊啊大ad阿斯达 阿斯达啊萨达萨达啊 是',
+              child: Text("${_productContent!.title}",
                   style: TextStyle(
                       color: Colors.black87, fontSize: AutoSize.sp(36)))),
           Container(
             padding: EdgeInsets.only(top: 10),
             child: Text(
-              '子标题子标题子标题子标题子标题子标题子标题子标题',
+              '${_productContent!.subTitle}',
               style:
                   TextStyle(color: Colors.black54, fontSize: AutoSize.sp(28)),
             ),
@@ -45,7 +66,7 @@ class _ProductDetailMainState extends State<ProductDetailMain> {
                   child: Row(
                     children: [
                       Text('特价：'),
-                      Text('￥22',
+                      Text('￥${_productContent!.price}',
                           style: TextStyle(
                               color: Colors.red, fontSize: AutoSize.sp(36)))
                     ],
@@ -56,7 +77,7 @@ class _ProductDetailMainState extends State<ProductDetailMain> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Text('原价：'),
-                      Text('￥50',
+                      Text('￥${_productContent!.oldPrice}',
                           style: TextStyle(
                               decoration: TextDecoration.lineThrough,
                               color: Colors.black38,
@@ -65,26 +86,27 @@ class _ProductDetailMainState extends State<ProductDetailMain> {
                   ))
             ]),
           ),
-          SafeArea(
-            child: Container(
-              margin: EdgeInsets.only(top: 10),
-              height: AutoSize.h(80),
-              child: InkWell(
-                onTap: () {
-                  _attrBottomSheet();
-                },
-                child: Row(
-                  children: [
-                    Text(
-                      '已选：',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+          // 已选择
+          _attr.isNotEmpty
+              ? Container(
+                  margin: EdgeInsets.only(top: 10),
+                  height: AutoSize.h(80),
+                  child: InkWell(
+                    onTap: () {
+                      _attrBottomSheet();
+                    },
+                    child: Row(
+                      children: [
+                        Text(
+                          '已选：',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text(_selectedValue)
+                      ],
                     ),
-                    Text('115，黑色，XL，1件')
-                  ],
-                ),
-              ),
-            ),
-          ),
+                  ),
+                )
+              : Text(''),
           Divider(),
           Container(
             height: AutoSize.h(80),
@@ -109,112 +131,159 @@ class _ProductDetailMainState extends State<ProductDetailMain> {
     showModalBottomSheet(
         context: context,
         builder: (context) {
-          return GestureDetector(
-              onTap: () {},
-              child: Stack(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(AutoSize.w(20)),
-                    child: ListView(
-                      children: [
-                        Column(
+          return StatefulBuilder(
+              builder: (BuildContext context, setBottomState) {
+            return Stack(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(AutoSize.w(20)),
+                  child: ListView(children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: _getAttrWidget(setBottomState),
+                    )
+                  ]),
+                ),
+                Positioned(
+                    bottom: 0,
+                    width: AutoSize.w(750),
+                    height: AutoSize.h(76),
+                    child: Row(children: [
+                      Container(
+                        width: AutoSize.w(750),
+                        height: AutoSize.h(76),
+                        child: Row(
                           children: [
-                            Wrap(
-                              children: [
-                                // 左侧名称
-                                Container(
-                                  width: AutoSize.w(100),
-                                  padding: EdgeInsets.only(top: AutoSize.h(30)),
-                                  child: Text(
-                                    '颜色：',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                // 右侧选项
-                                Container(
-                                  width: AutoSize.w(610),
-                                  child: Wrap(
-                                    children: [
-                                      Container(
-                                        margin: EdgeInsets.all(10),
-                                        child: Chip(
-                                          label: Text('白色'),
-                                          padding: EdgeInsets.all(10),
-                                        ),
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.all(10),
-                                        child: Chip(
-                                          label: Text('白色'),
-                                          padding: EdgeInsets.all(10),
-                                        ),
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.all(10),
-                                        child: Chip(
-                                          label: Text('白色'),
-                                          padding: EdgeInsets.all(10),
-                                        ),
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.all(10),
-                                        child: Chip(
-                                          label: Text('白色'),
-                                          padding: EdgeInsets.all(10),
-                                        ),
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.all(10),
-                                        child: Chip(
-                                          label: Text('白色'),
-                                          padding: EdgeInsets.all(10),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            )
+                            Expanded(
+                                flex: 1,
+                                child: Container(
+                                  margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                                  child: ButtonWidget(
+                                      color: Color.fromRGBO(253, 1, 0, 0.9),
+                                      text: '加入购物车',
+                                      cb: () {}),
+                                )),
+                            Expanded(
+                                flex: 1,
+                                child: Container(
+                                  margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                  child: ButtonWidget(
+                                      color: Color.fromRGBO(255, 165, 0, 0.9),
+                                      text: '立即购买',
+                                      cb: () {}),
+                                ))
                           ],
-                        )
-                      ],
-                    ),
-                  ),
-                  Positioned(
-                      bottom: 0,
-                      width: AutoSize.w(750),
-                      height: AutoSize.h(76),
-                      child: Row(children: [
-                        Container(
-                          width: AutoSize.w(750),
-                          height: AutoSize.h(76),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                  flex: 1,
-                                  child: Container(
-                                    margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                                    child: ButtonWidget(
-                                        color: Color.fromRGBO(253, 1, 0, 0.9),
-                                        text: '加入购物车',
-                                        cb: () {}),
-                                  )),
-                              Expanded(
-                                  flex: 1,
-                                  child: Container(
-                                    margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                    child: ButtonWidget(
-                                        color: Color.fromRGBO(255, 165, 0, 0.9),
-                                        text: '立即购买',
-                                        cb: () {}),
-                                  ))
-                            ],
-                          ),
-                        )
-                      ]))
-                ],
-              ));
+                        ),
+                      )
+                    ]))
+              ],
+            );
+          });
         });
+  }
+
+  // 属性选择
+  List<Widget> _getAttrWidget(setBottomState) {
+    List<Widget> attrList = [];
+    _attr.forEach((attrItem) {
+      attrList.add(Wrap(
+        children: [
+          // 左侧名称
+          Container(
+            width: AutoSize.w(120),
+            padding: EdgeInsets.only(top: AutoSize.h(30)),
+            child: Text(
+              '${attrItem.cate}: ',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          // 右侧选项
+          Container(
+            width: AutoSize.w(590),
+            child: Wrap(
+              children: _getAttrItemWidget(attrItem, setBottomState),
+            ),
+          )
+        ],
+      ));
+    });
+    return attrList;
+  }
+
+  // 属性item
+  List<Widget> _getAttrItemWidget(attrItem, setBottomState) {
+    List<Widget> attrItemList = [];
+    attrItem.attrList.forEach((item) {
+      attrItemList.add(Container(
+        margin: EdgeInsets.all(10),
+        child: InkWell(
+          onTap: () {
+            _changeAttr(attrItem.cate, item['title'], setBottomState);
+          },
+          child: Chip(
+            label: Text('${item['title']}'),
+            padding: EdgeInsets.all(10),
+            backgroundColor: item['checked'] ? Colors.red : Colors.black26,
+          ),
+        ),
+      ));
+    });
+    return attrItemList;
+  }
+
+  // 初始化attr数据 加checked属性
+  void _initAttr() {
+    //注意attrList属性需要在model中定义
+    var attr = _attr;
+    for (var i = 0; i < attr.length; i++) {
+      for (var j = 0; j < attr[i].list.length; j++) {
+        // 第一个属性默认选中
+        if (j == 0) {
+          attr[i].attrList.add({"title": attr[i].list[j], "checked": true});
+        } else {
+          attr[i].attrList.add({"title": attr[i].list[j], "checked": false});
+        }
+      }
+    }
+    _getSelectedAttrValue();
+  }
+
+  // 获取选中的属性
+  void _getSelectedAttrValue() {
+    var _list = _attr;
+    List tempArr = [];
+    for (var i = 0; i < _list.length; i++) {
+      for (var j = 0; j < _list[i].attrList.length; j++) {
+        if (_list[i].attrList[j]['checked'] == true) {
+          tempArr.add(_list[i].attrList[j]['title']);
+        }
+      }
+    }
+    setState(() {
+      _selectedValue = tempArr.join(',');
+    });
+  }
+
+  // 点击属性
+  void _changeAttr(cate, title, setBottomState) {
+    var attr = _attr;
+    for (var i = 0; i < attr.length; i++) {
+      // 找到对应的属性行
+      if (attr[i].cate == cate) {
+        for (var j = 0; j < attr[i].attrList.length; j++) {
+          // 先把选中都设置false
+          attr[i].attrList[j]['checked'] = false;
+          // 再找到当前点击的属性 设置选中
+          if (attr[i].attrList[j]['title'] == title) {
+            attr[i].attrList[j]['checked'] = true;
+          }
+        }
+      }
+    }
+    //注意  改变showModalBottomSheet里面的数据 来源于StatefulBuilder
+    setBottomState(() {
+      _attr = attr;
+    });
+    _getSelectedAttrValue();
   }
 }

@@ -10,7 +10,7 @@ class LoadingWidget extends StatelessWidget {
     return Center(
       child: Padding(
         padding: EdgeInsets.all(10),
-        child: Row(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -18,8 +18,10 @@ class LoadingWidget extends StatelessWidget {
               '加载中...',
               style: TextStyle(fontSize: 16),
             ),
+            SizedBox(height: 10),
             CircularProgressIndicator(
               strokeWidth: 1,
+              backgroundColor: Colors.red,
             )
           ],
         ),
