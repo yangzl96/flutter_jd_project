@@ -66,12 +66,50 @@ class _CategoryPageState extends State<CategoryPage>
 
     //获取计算后的高度
     var rightItemHeight = rightItemWidth + AutoSize.h(28);
-    return Row(
-      children: [
-        _leftCateWidget(leftWidth),
-        _rightCateWidget(rightItemWidth, rightItemHeight)
-      ],
-    );
+    return Scaffold(
+        appBar: AppBar(
+          // elevation: 0,
+          leading: IconButton(
+              icon: Icon(
+                Icons.center_focus_weak,
+                color: Colors.black87,
+                size: 28,
+              ),
+              onPressed: () {}),
+          title: GestureDetector(
+            child: Container(
+              height: AutoSize.h(60),
+              decoration: BoxDecoration(
+                  color: Color.fromRGBO(233, 233, 233, 0.8),
+                  borderRadius: BorderRadius.circular(30)),
+              padding: EdgeInsets.only(left: 10),
+              child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(Icons.search),
+                    Text('笔记本', style: TextStyle(fontSize: AutoSize.sp(28)))
+                  ]),
+            ),
+            onTap: () {
+              Navigator.pushNamed(context, '/search');
+            },
+          ),
+          actions: [
+            IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.message,
+                  color: Colors.black87,
+                  size: 28,
+                ))
+          ],
+        ),
+        body: Row(
+          children: [
+            _leftCateWidget(leftWidth),
+            _rightCateWidget(rightItemWidth, rightItemHeight)
+          ],
+        ));
   }
 
   // 左侧

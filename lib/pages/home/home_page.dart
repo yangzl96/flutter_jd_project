@@ -35,24 +35,63 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        // 轮播图
-        SwiperWidget(_focusData),
-        SizedBox(
-          height: AutoSize.h(20),
+    return Scaffold(
+      appBar: AppBar(
+        // elevation: 0,
+        leading: IconButton(
+            icon: Icon(
+              Icons.center_focus_weak,
+              color: Colors.black87,
+              size: 28,
+            ),
+            onPressed: () {}),
+        title: GestureDetector(
+          child: Container(
+            height: AutoSize.h(60),
+            decoration: BoxDecoration(
+                color: Color.fromRGBO(233, 233, 233, 0.8),
+                borderRadius: BorderRadius.circular(30)),
+            padding: EdgeInsets.only(left: 10),
+            child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(Icons.search),
+                  Text('笔记本', style: TextStyle(fontSize: AutoSize.sp(28)))
+                ]),
+          ),
+          onTap: () {
+            Navigator.pushNamed(context, '/search');
+          },
         ),
-        const TitleWidget('猜你喜欢'),
-        SizedBox(
-          height: AutoSize.h(20),
-        ),
-        _hotProductList(),
-        SizedBox(
-          height: AutoSize.h(20),
-        ),
-        const TitleWidget('热门推荐'),
-        _recProductWidget()
-      ],
+        actions: [
+          IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.message,
+                color: Colors.black87,
+                size: 28,
+              ))
+        ],
+      ),
+      body: ListView(
+        children: [
+          // 轮播图
+          SwiperWidget(_focusData),
+          SizedBox(
+            height: AutoSize.h(20),
+          ),
+          const TitleWidget('猜你喜欢'),
+          SizedBox(
+            height: AutoSize.h(20),
+          ),
+          _hotProductList(),
+          SizedBox(
+            height: AutoSize.h(20),
+          ),
+          const TitleWidget('热门推荐'),
+          _recProductWidget()
+        ],
+      ),
     );
   }
 

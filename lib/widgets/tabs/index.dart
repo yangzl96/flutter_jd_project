@@ -24,48 +24,6 @@ class _TabsState extends State<Tabs> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _currentIndex != 3
-          ? AppBar(
-            // elevation: 0,
-              leading: IconButton(
-                  icon: Icon(
-                    Icons.center_focus_weak,
-                    color: Colors.black87,
-                    size: 28,
-                  ),
-                  onPressed: () {}),
-              title: GestureDetector(
-                child: Container(
-                  height: AutoSize.h(60),
-                  decoration: BoxDecoration(
-                      color: Color.fromRGBO(233, 233, 233, 0.8),
-                      borderRadius: BorderRadius.circular(30)),
-                  padding: EdgeInsets.only(left: 10),
-                  child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Icon(Icons.search),
-                        Text('笔记本', style: TextStyle(fontSize: AutoSize.sp(28)))
-                      ]),
-                ),
-                onTap: () {
-                  Navigator.pushNamed(context, '/search');
-                },
-              ),
-              actions: [
-                IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.message,
-                      color: Colors.black87,
-                      size: 28,
-                    ))
-              ],
-            )
-          : AppBar(
-              title: Text('用户中心'),
-            ),
-
       // 方案一：IndexedStack：实现状态保存 原来直接是 pageList[_currentIndex]
       // 会导致每次切换页面都在加载数据 但是这个方案也存在问题
       // 就是一次会加载四个页面 并且如果购物车的数据需要更新？就没有办法了
