@@ -6,6 +6,7 @@ import 'package:jd_project/provider/Cart.dart';
 import 'package:jd_project/provider/Counter.dart';
 import 'package:jd_project/routers/index.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jd_project/utils/Stroage.dart';
 import 'package:jd_project/utils/color.dart';
 import 'package:provider/provider.dart';
 
@@ -23,6 +24,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
+    // Storage.clear();
     return ScreenUtilInit(
         designSize: const Size(750, 1334), //设计稿的宽度和高度
         minTextAdapt: true,

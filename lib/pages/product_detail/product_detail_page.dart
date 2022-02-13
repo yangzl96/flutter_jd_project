@@ -4,12 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:jd_project/pages/product_detail/product_detail_comment.dart';
 import 'package:jd_project/pages/product_detail/product_detail_info.dart';
 import 'package:jd_project/pages/product_detail/product_detail_main.dart';
+import 'package:jd_project/provider/Cart.dart';
 import 'package:jd_project/utils/autoSize.dart';
+import 'package:jd_project/utils/cart.dart';
+import 'package:jd_project/utils/eventBus.dart';
 import 'package:jd_project/widgets/button/index.dart';
 import 'package:jd_project/config/index.dart';
 import 'package:dio/dio.dart';
 import 'package:jd_project/model/ProductContentModel.dart';
 import 'package:jd_project/widgets/loading/index.dart';
+import 'package:provider/provider.dart';
 
 class ProductDetailPage extends StatefulWidget {
   Map arguments;
@@ -30,6 +34,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   @override
   Widget build(BuildContext context) {
     TextStyle textStyle = TextStyle(fontSize: 16);
+    var cartProvider = Provider.of<Cart>(context);
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -116,13 +121,38 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                     child: ButtonWidget(
                                         color: Color.fromRGBO(253, 1, 0, 0.9),
                                         text: '加入购物车',
-                                        cb: () {})),
+                                        cb: () async {
+                                          // 如果有属性选择
+                                          if (_productContentList[0]
+                                                  .attr
+                                                  .length >
+                                              0) {
+                                            // 广播
+                                            eventBus.fire(
+                                                ProductContentEvent('加入购物车'));
+                                          } else {
+                                            await CartUtils.addCart(
+                                                _productContentList[0]);
+                                            Navigator.of(context).pop();
+                                            // 通知Provider更新
+                                            cartProvider.updateCartList();
+                                          }
+                                        })),
                                 Expanded(
                                     flex: 1,
                                     child: ButtonWidget(
                                         color: Color.fromRGBO(255, 165, 0, 0.9),
                                         text: '立即购买',
-                                        cb: () {})),
+                                        cb: () {
+                                          if (_productContentList[0]
+                                                  .attr
+                                                  .length >
+                                              0) {
+                                            // 广播
+                                            eventBus.fire(
+                                                ProductContentEvent('立即购买'));
+                                          } else {}
+                                        })),
                               ])))
                     ],
                   )

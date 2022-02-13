@@ -1,19 +1,34 @@
 // ignore_for_file: file_names
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:jd_project/utils/Stroage.dart';
 
 class Cart extends ChangeNotifier {
   List _cartList = [];
+  // 获取
   List get cartList => _cartList;
-  int get cartNum => _cartList.length;
 
-  addCartItem(value) {
-    _cartList.add(value);
+  // 构造方法
+  Cart() {
+    _init();
+  }
+  // 初始化获取购物车数据
+  void _init() async {
+    String? cartList = await Storage.getString('cartList');
+    if (cartList != null) {
+      // json => map
+      List cartListData = json.decode(cartList);
+      _cartList = cartListData;
+    } else {
+      _cartList = [];
+    }
     notifyListeners();
   }
 
-  deleteCartItem(value) {
-    _cartList.remove(value);
-    notifyListeners();
+  // 更新获取方法
+  updateCartList() {
+    _init();
   }
 }

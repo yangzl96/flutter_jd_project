@@ -1,10 +1,14 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace, prefer_const_constructors_in_immutables
-
 import 'package:flutter/material.dart';
 import 'package:jd_project/config/index.dart';
+import 'package:jd_project/pages/cart/cart_num.dart';
+import 'package:jd_project/provider/Cart.dart';
 import 'package:jd_project/utils/autoSize.dart';
+import 'package:jd_project/utils/cart.dart';
+import 'package:jd_project/utils/eventBus.dart';
 import 'package:jd_project/widgets/button/index.dart';
 import 'package:jd_project/model/ProductContentModel.dart';
+import 'package:provider/provider.dart';
 
 class ProductDetailMain extends StatefulWidget {
   final List _productContentList;
@@ -15,45 +19,62 @@ class ProductDetailMain extends StatefulWidget {
 }
 
 class _ProductDetailMainState extends State<ProductDetailMain> {
-  ProductContentitem? _productContent;
+  // 商品信息
+  late ProductContentitem _productContent;
+
   // 已选 类别 属性
   List _attr = [];
 
   // 选择的值
   String _selectedValue = "";
 
+  // 监听
+  var actionEventBus;
+
+  var cartProvider;
+
   @override
   void initState() {
     super.initState();
     _productContent = widget._productContentList[0];
-    _attr = _productContent!.attr;
+    print(_productContent.toJson() is Map);
+    _attr = _productContent.attr;
     _initAttr();
+    // 监听广播
+    actionEventBus = eventBus.on<ProductContentEvent>().listen((str) {
+      _attrBottomSheet();
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    // 取消监听
+    actionEventBus.cancel();
   }
 
   @override
   Widget build(BuildContext context) {
+    // 获取 provider cart
+    cartProvider = Provider.of<Cart>(context);
     //处理图片
-    String pic = Config.domain + _productContent!.pic;
+    String pic = Config.domain + _productContent.pic;
     pic = pic.replaceAll('\\', '/');
     return Container(
       padding: const EdgeInsets.all(10),
       child: ListView(
         children: [
           AspectRatio(
-              aspectRatio: 16 / 12,
-              child: Image.network(
-                pic,
-                fit: BoxFit.cover,
-              )),
+              aspectRatio: 6 / 5, child: Image.network(pic, fit: BoxFit.fill)),
           Container(
               padding: EdgeInsets.only(top: 10),
-              child: Text("${_productContent!.title}",
+              child: Text("${_productContent.title}",
                   style: TextStyle(
                       color: Colors.black87, fontSize: AutoSize.sp(36)))),
           Container(
             padding: EdgeInsets.only(top: 10),
             child: Text(
-              '${_productContent!.subTitle}',
+              '${_productContent.subTitle}',
               style:
                   TextStyle(color: Colors.black54, fontSize: AutoSize.sp(28)),
             ),
@@ -66,7 +87,7 @@ class _ProductDetailMainState extends State<ProductDetailMain> {
                   child: Row(
                     children: [
                       Text('特价：'),
-                      Text('￥${_productContent!.price}',
+                      Text('￥${_productContent.price}',
                           style: TextStyle(
                               color: Colors.red, fontSize: AutoSize.sp(36)))
                     ],
@@ -77,7 +98,7 @@ class _ProductDetailMainState extends State<ProductDetailMain> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Text('原价：'),
-                      Text('￥${_productContent!.oldPrice}',
+                      Text('￥${_productContent.oldPrice}',
                           style: TextStyle(
                               decoration: TextDecoration.lineThrough,
                               color: Colors.black38,
@@ -141,7 +162,26 @@ class _ProductDetailMainState extends State<ProductDetailMain> {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: _getAttrWidget(setBottomState),
-                    )
+                    ),
+                    Divider(),
+                    Container(
+                        margin: EdgeInsets.only(top: 10),
+                        height: AutoSize.h(80),
+                        child: InkWell(
+                          onTap: () {},
+                          child: Row(
+                            children: [
+                              Text(
+                                '数量',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              CartNum(_productContent)
+                            ],
+                          ),
+                        ))
                   ]),
                 ),
                 Positioned(
@@ -161,7 +201,16 @@ class _ProductDetailMainState extends State<ProductDetailMain> {
                                   child: ButtonWidget(
                                       color: Color.fromRGBO(253, 1, 0, 0.9),
                                       text: '加入购物车',
-                                      cb: () {}),
+                                      cb: () async {
+                                        // 加入购物车的操作有异步代码
+                                        // 所以这里要等待，否则会造成
+                                        // 加入购物车后数据没有更新
+                                        await CartUtils.addCart(
+                                            _productContent);
+                                        Navigator.of(context).pop();
+                                        // 通知Provider更新
+                                        cartProvider.updateCartList();
+                                      }),
                                 )),
                             Expanded(
                                 flex: 1,
@@ -261,6 +310,8 @@ class _ProductDetailMainState extends State<ProductDetailMain> {
     }
     setState(() {
       _selectedValue = tempArr.join(',');
+      // 赋值选中的属性到实例中去
+      _productContent.selectedAttr = _selectedValue;
     });
   }
 

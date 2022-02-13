@@ -1,10 +1,11 @@
+// ignore_for_file: file_names
 
 import 'package:flutter/material.dart';
 import 'package:jd_project/model/ProductContentModel.dart';
 import 'package:jd_project/utils/autoSize.dart';
 
 class CartNum extends StatefulWidget {
-  ProductContentitem _itemData;
+  Map _itemData;
   CartNum(this._itemData, {Key? key}) : super(key: key);
 
   @override
@@ -12,7 +13,7 @@ class CartNum extends StatefulWidget {
 }
 
 class _CartNumState extends State<CartNum> {
-  late ProductContentitem _itemData;
+  late Map _itemData;
   @override
   void initState() {
     super.initState();
@@ -35,9 +36,9 @@ class _CartNumState extends State<CartNum> {
   Widget _leftBtn() {
     return InkWell(
       onTap: () {
-        if (_itemData.count > 1) {
+        if (_itemData['count']! > 1) {
           setState(() {
-            _itemData.count = _itemData.count - 1;
+            _itemData['count'] = _itemData['count']! - 1;
           });
         }
       },
@@ -60,7 +61,7 @@ class _CartNumState extends State<CartNum> {
           border: Border(
               left: BorderSide(width: 1, color: Colors.black12),
               right: BorderSide(width: 1, color: Colors.black12))),
-      child: Text("${_itemData.count}"),
+      child: Text("${_itemData['count']}"),
     );
   }
 
@@ -69,7 +70,7 @@ class _CartNumState extends State<CartNum> {
     return InkWell(
       onTap: () {
         setState(() {
-          _itemData.count = _itemData.count + 1;
+          _itemData['count'] = _itemData['count']! + 1;
         });
       },
       child: Container(
@@ -81,4 +82,3 @@ class _CartNumState extends State<CartNum> {
     );
   }
 }
-
