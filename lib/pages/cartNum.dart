@@ -2,7 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:jd_project/model/ProductContentModel.dart';
+import 'package:jd_project/provider/Cart.dart';
 import 'package:jd_project/utils/autoSize.dart';
+import 'package:provider/provider.dart';
 
 class CartNum extends StatefulWidget {
   Map _itemData;
@@ -14,6 +16,7 @@ class CartNum extends StatefulWidget {
 
 class _CartNumState extends State<CartNum> {
   late Map _itemData;
+  var cartProvider;
   @override
   void initState() {
     super.initState();
@@ -22,6 +25,7 @@ class _CartNumState extends State<CartNum> {
 
   @override
   Widget build(BuildContext context) {
+    cartProvider = Provider.of<Cart>(context);
     return Container(
       width: AutoSize.w(164),
       decoration:
@@ -37,9 +41,8 @@ class _CartNumState extends State<CartNum> {
     return InkWell(
       onTap: () {
         if (_itemData['count']! > 1) {
-          setState(() {
-            _itemData['count'] = _itemData['count']! - 1;
-          });
+          _itemData['count'] = _itemData['count']! - 1;
+          cartProvider.itemCountChange();
         }
       },
       child: Container(
@@ -69,9 +72,8 @@ class _CartNumState extends State<CartNum> {
   Widget _rightBtn() {
     return InkWell(
       onTap: () {
-        setState(() {
-          _itemData['count'] = _itemData['count']! + 1;
-        });
+        _itemData['count'] = _itemData['count']! + 1;
+        cartProvider.itemCountChange();
       },
       child: Container(
         alignment: Alignment.center,

@@ -1,11 +1,10 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:jd_project/model/ProductContentModel.dart';
 import 'package:jd_project/pages/cartNum.dart';
+import 'package:jd_project/provider/Cart.dart';
 import 'package:jd_project/utils/autoSize.dart';
+import 'package:provider/provider.dart';
 
 class CartItem extends StatefulWidget {
   Map _itemData;
@@ -17,6 +16,7 @@ class CartItem extends StatefulWidget {
 
 class _CartItemState extends State<CartItem> {
   late Map _itemData;
+  var cartProvider;
   @override
   void initState() {
     super.initState();
@@ -25,6 +25,7 @@ class _CartItemState extends State<CartItem> {
 
   @override
   Widget build(BuildContext context) {
+    cartProvider = Provider.of<Cart>(context);
     return Container(
       width: AutoSize.w(200),
       padding: const EdgeInsets.all(5),
@@ -32,19 +33,25 @@ class _CartItemState extends State<CartItem> {
           border: Border(bottom: BorderSide(width: 1, color: Colors.black12))),
       child: Row(
         children: [
+          // 选择框
           SizedBox(
             width: AutoSize.w(60),
             child: Checkbox(
-              onChanged: (v) {},
-              value: true,
+              onChanged: (v) {
+                _itemData['checked'] = !_itemData['checked'];
+                cartProvider.itemChange();
+              },
+              value: _itemData['checked'],
               activeColor: Colors.red,
             ),
           ),
+          // 图片
           SizedBox(
             width: AutoSize.w(160),
             height: AutoSize.h(120),
             child: Image.network("${_itemData['pic']}", fit: BoxFit.fill),
           ),
+          // 商品信息
           Expanded(
               flex: 1,
               child: Container(

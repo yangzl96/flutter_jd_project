@@ -1,9 +1,6 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, avoid_unnecessary_containers, sized_box_for_whitespace
 
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:jd_project/model/ProductContentModel.dart';
 import 'package:jd_project/pages/cart/cart_item.dart';
 import 'package:jd_project/provider/Cart.dart';
 import 'package:jd_project/utils/autoSize.dart';
@@ -37,9 +34,9 @@ class _CartPageState extends State<CartPage> {
                   ListView(
                     // 遍历购物车数据
                     children: cartProvider.cartList.map((value) {
-                      print(value is Map);
+                      // print(value is Map);
                       // value = json.encode(value);
-                      print(value);
+                      // print(value);
                       // print(value is String);
                       // value = json.decode(value);
                       // final model = ProductContentitem.fromJson(json);
@@ -68,8 +65,11 @@ class _CartPageState extends State<CartPage> {
                                     Container(
                                       width: AutoSize.w(60),
                                       child: Checkbox(
-                                          onChanged: (v) {},
-                                          value: false,
+                                          onChanged: (v) {
+                                            // 实现全选反选
+                                            cartProvider.checkedAll(v);
+                                          },
+                                          value: cartProvider.isCheckedAll,
                                           activeColor: Colors.red),
                                     ),
                                     Text('全选')
