@@ -8,6 +8,7 @@ import 'package:jd_project/provider/Cart.dart';
 import 'package:jd_project/utils/autoSize.dart';
 import 'package:jd_project/utils/cart.dart';
 import 'package:jd_project/utils/eventBus.dart';
+import 'package:jd_project/utils/toast.dart';
 import 'package:jd_project/widgets/button/index.dart';
 import 'package:jd_project/config/index.dart';
 import 'package:dio/dio.dart';
@@ -105,17 +106,22 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                       top: BorderSide(
                                           width: 1, color: Colors.black26))),
                               child: Row(children: [
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(top: AutoSize.h(10)),
-                                    height: AutoSize.h(88),
-                                    width: 100,
-                                    child: Column(
-                                      children: [
-                                        Icon(Icons.shopping_cart),
-                                        Text('购物车')
-                                      ],
-                                    )),
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.of(context).pushNamed('/cart');
+                                  },
+                                  child: Container(
+                                      padding:
+                                          EdgeInsets.only(top: AutoSize.h(10)),
+                                      height: AutoSize.h(88),
+                                      width: 100,
+                                      child: Column(
+                                        children: [
+                                          Icon(Icons.shopping_cart),
+                                          Text('购物车')
+                                        ],
+                                      )),
+                                ),
                                 Expanded(
                                     flex: 1,
                                     child: ButtonWidget(
@@ -136,6 +142,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                             Navigator.of(context).pop();
                                             // 通知Provider更新
                                             cartProvider.updateCartList();
+                                            ShowToast.toast('加入成功');
                                           }
                                         })),
                                 Expanded(

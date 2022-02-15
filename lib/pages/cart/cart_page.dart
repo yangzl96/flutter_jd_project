@@ -14,6 +14,8 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
+  // 是否编辑
+  bool _isEdit = false;
   @override
   void initState() {
     super.initState();
@@ -26,7 +28,15 @@ class _CartPageState extends State<CartPage> {
     return Scaffold(
         appBar: AppBar(
           title: const Text('购物车'),
-          actions: [IconButton(onPressed: null, icon: Icon(Icons.launch))],
+          actions: [
+            IconButton(
+                onPressed: () {
+                  setState(() {
+                    _isEdit = !_isEdit;
+                  });
+                },
+                icon: Icon(Icons.launch))
+          ],
         ),
         body: cartProvider.cartList.isNotEmpty
             ? Stack(
@@ -34,13 +44,6 @@ class _CartPageState extends State<CartPage> {
                   ListView(
                     // 遍历购物车数据
                     children: cartProvider.cartList.map((value) {
-                      // print(value is Map);
-                      // value = json.encode(value);
-                      // print(value);
-                      // print(value is String);
-                      // value = json.decode(value);
-                      // final model = ProductContentitem.fromJson(json);
-                      // print(model);
                       return CartItem(value);
                     }).toList(),
                   ),
@@ -72,26 +75,78 @@ class _CartPageState extends State<CartPage> {
                                           value: cartProvider.isCheckedAll,
                                           activeColor: Colors.red),
                                     ),
-                                    Text('全选')
+                                    Text('全选'),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                    _isEdit == false ? Text('合计:') : Text(''),
+                                    _isEdit == false
+                                        ? Text("${cartProvider.allPrice}",
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                color: Colors.red))
+                                        : Text('')
                                   ],
                                 ),
                               ),
-                              Container(
-                                child: Container(
-                                  width: AutoSize.w(200),
-                                  padding:
-                                      EdgeInsets.only(right: AutoSize.w(10)),
-                                  child: ElevatedButton(
-                                    child: Text('结算',
-                                        style: TextStyle(color: Colors.white)),
-                                    onPressed: () {},
-                                    style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStateProperty.all(
-                                                Colors.red)),
-                                  ),
-                                ),
-                              )
+                              _isEdit == false
+                                  ? Padding(
+                                      padding: EdgeInsets.only(
+                                          right: AutoSize.w(16)),
+                                      child: Align(
+                                        alignment: Alignment.centerRight,
+                                        child: ElevatedButton(
+                                            onPressed: () {},
+                                            child: Text(
+                                              '结算',
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                            style: ButtonStyle(
+                                                padding:
+                                                    MaterialStateProperty.all(
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 8)),
+                                                backgroundColor:
+                                                    MaterialStateProperty.all(
+                                                        Colors.red))),
+                                      ),
+                                    )
+                                  : Padding(
+                                      padding: EdgeInsets.only(
+                                          right: AutoSize.w(16)),
+                                      child: Align(
+                                        alignment: Alignment.centerRight,
+                                        child: ElevatedButton(
+                                          child: Text("删除",
+                                              style: TextStyle(
+                                                  color: Colors.white)),
+                                          style: ButtonStyle(
+                                              backgroundColor:
+                                                  MaterialStateProperty.all(
+                                                      Colors.red)),
+                                          onPressed: () {
+                                            cartProvider.removeItem();
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                              // Container(
+                              //   child: Container(
+                              //     width: AutoSize.w(200),
+                              //     padding:
+                              //         EdgeInsets.only(right: AutoSize.w(10)),
+                              //     child: ElevatedButton(
+                              //       child: Text('结算',
+                              //           style: TextStyle(color: Colors.white)),
+                              //       onPressed: () {},
+                              //       style: ButtonStyle(
+                              //           backgroundColor:
+                              //               MaterialStateProperty.all(
+                              //                   Colors.red)),
+                              //     ),
+                              //   ),
+                              // )
                             ],
                           )))
                 ],

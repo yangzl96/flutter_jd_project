@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, must_be_immutable
 
 import 'package:flutter/material.dart';
 import 'package:jd_project/pages/cartNum.dart';
@@ -17,14 +17,20 @@ class CartItem extends StatefulWidget {
 class _CartItemState extends State<CartItem> {
   late Map _itemData;
   var cartProvider;
-  @override
-  void initState() {
-    super.initState();
-    _itemData = widget._itemData;
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   // 千万不要在这里赋值，因为只会执行一次 随后都执行build
+  //   // 所以导致了购物车的数据删除的时候不正确
+  //   _itemData = widget._itemData;
+  //   print(1);
+  //   print(_itemData);
+  //   print(1);
+  // }
 
   @override
   Widget build(BuildContext context) {
+    _itemData = widget._itemData;
     cartProvider = Provider.of<Cart>(context);
     return Container(
       width: AutoSize.w(200),

@@ -6,6 +6,7 @@ import 'package:jd_project/provider/Cart.dart';
 import 'package:jd_project/utils/autoSize.dart';
 import 'package:jd_project/utils/cart.dart';
 import 'package:jd_project/utils/eventBus.dart';
+import 'package:jd_project/utils/toast.dart';
 import 'package:jd_project/widgets/button/index.dart';
 import 'package:jd_project/model/ProductContentModel.dart';
 import 'package:provider/provider.dart';
@@ -37,7 +38,7 @@ class _ProductDetailMainState extends State<ProductDetailMain> {
   void initState() {
     super.initState();
     _productContent = widget._productContentList[0];
-    print(_productContent.toJson() is Map);
+    // print(_productContent.toJson() is Map);
     _attr = _productContent.attr;
     _initAttr();
     // 监听广播
@@ -210,6 +211,7 @@ class _ProductDetailMainState extends State<ProductDetailMain> {
                                         Navigator.of(context).pop();
                                         // 通知Provider更新
                                         cartProvider.updateCartList();
+                                        ShowToast.toast('加入成功');
                                       }),
                                 )),
                             Expanded(
@@ -270,7 +272,9 @@ class _ProductDetailMainState extends State<ProductDetailMain> {
             _changeAttr(attrItem.cate, item['title'], setBottomState);
           },
           child: Chip(
-            label: Text('${item['title']}'),
+            label: Text('${item['title']}', style: TextStyle(
+              color: item['checked'] ? Colors.white : Colors.black54,
+            )),
             padding: EdgeInsets.all(10),
             backgroundColor: item['checked'] ? Colors.red : Colors.black26,
           ),
