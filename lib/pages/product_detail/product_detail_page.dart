@@ -87,7 +87,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             child: _productContentList.isNotEmpty
                 ? Stack(
                     children: [
-                      TabBarView(children: [
+                      TabBarView(
+                        physics: NeverScrollableScrollPhysics(), //禁止左右滑动（详情页上下滑动的时候可能会造成tabbar左右滑动）
+                        children: [
                         //商品
                         ProductDetailMain(_productContentList),
                         //详情
@@ -112,13 +114,21 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                   },
                                   child: Container(
                                       padding:
-                                          EdgeInsets.only(top: AutoSize.h(10)),
-                                      height: AutoSize.h(88),
-                                      width: 100,
+                                          EdgeInsets.only(top: AutoSize.h(4)),
+                                      height: AutoSize.h(84),
+                                      width: AutoSize.w(120),
                                       child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          Icon(Icons.shopping_cart),
-                                          Text('购物车')
+                                          Icon(
+                                            Icons.shopping_cart,
+                                            size: AutoSize.sp(36),
+                                          ),
+                                          Text(
+                                            '购物车',
+                                            style: TextStyle(
+                                                fontSize: AutoSize.sp(22)),
+                                          )
                                         ],
                                       )),
                                 ),

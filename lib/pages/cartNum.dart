@@ -27,9 +27,9 @@ class _CartNumState extends State<CartNum> {
   Widget build(BuildContext context) {
     cartProvider = Provider.of<Cart>(context);
     return Container(
-      width: AutoSize.w(164),
-      decoration:
-          BoxDecoration(border: Border.all(width: 1, color: Colors.black12)),
+      width: AutoSize.w(168),
+      decoration: BoxDecoration(
+          border: Border.all(width: AutoSize.w(2), color: Colors.black12)),
       child: Row(
         children: [_leftBtn(), _centerArea(), _rightBtn()],
       ),
@@ -60,10 +60,10 @@ class _CartNumState extends State<CartNum> {
       alignment: Alignment.center,
       width: AutoSize.w(70),
       height: AutoSize.h(45),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
           border: Border(
-              left: BorderSide(width: 1, color: Colors.black12),
-              right: BorderSide(width: 1, color: Colors.black12))),
+              left: BorderSide(width: AutoSize.w(2), color: Colors.black12),
+              right: BorderSide(width: AutoSize.w(2), color: Colors.black12))),
       child: Text("${_itemData['count']}"),
     );
   }

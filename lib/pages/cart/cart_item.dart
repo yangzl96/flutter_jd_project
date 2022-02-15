@@ -33,7 +33,7 @@ class _CartItemState extends State<CartItem> {
     _itemData = widget._itemData;
     cartProvider = Provider.of<Cart>(context);
     return Container(
-      width: AutoSize.w(200),
+      width: AutoSize.w(220),
       padding: const EdgeInsets.all(5),
       decoration: const BoxDecoration(
           border: Border(bottom: BorderSide(width: 1, color: Colors.black12))),
