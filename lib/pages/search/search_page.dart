@@ -1,9 +1,11 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:jd_project/utils/Stroage.dart';
 import 'package:jd_project/utils/autoSize.dart';
 import 'package:jd_project/utils/searchUtils.dart';
+import 'package:jd_project/utils/toast.dart';
 
 class SearchPage extends StatefulWidget {
   SearchPage({Key? key}) : super(key: key);
@@ -57,9 +59,13 @@ class _SearchPageState extends State<SearchPage> {
                 ),
               ),
               onTap: () async {
-                await SearchUtils.setHistoryData(_keyWords);
-                Navigator.of(context).pushReplacementNamed('/productList',
-                    arguments: {'keywords': _keyWords});
+                if (_keyWords != null) {
+                  await SearchUtils.setHistoryData(_keyWords);
+                  Navigator.of(context).pushReplacementNamed('/productList',
+                      arguments: {'keywords': _keyWords});
+                } else {
+                  ShowToast.toast('请输入关键词');
+                }
               },
             )
           ]),
@@ -121,15 +127,17 @@ class _SearchPageState extends State<SearchPage> {
                           Column(
                             children: _historyListData.map((item) {
                               return Column(children: [
-                                ListTile(
-                                  trailing: IconButton(
-                                    onPressed: () {
-                                      _showAlertDialog("$item");
-                                    },
-                                    icon: Icon(Icons.clear_outlined),
-                                  ),
-                                  title: Text('$item'),
-                                ),
+                                item == null
+                                    ? Text('')
+                                    : ListTile(
+                                        trailing: IconButton(
+                                          onPressed: () {
+                                            _showAlertDialog("$item");
+                                          },
+                                          icon: Icon(Icons.clear_outlined),
+                                        ),
+                                        title: Text('$item'),
+                                      ),
                                 Divider()
                               ]);
                             }).toList(),
