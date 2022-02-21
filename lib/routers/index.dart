@@ -21,7 +21,8 @@ final routes = {
   '/productDetail': (context, {arguments}) =>
       ProductDetailPage(arguments: arguments),
   '/registerFirst': (context) => RegisterFirstPage(),
-  '/registerSecond': (context) => RegisterSecondPage(),
+  '/registerSecond': (context, {arguments}) =>
+      RegisterSecondPage(arguments: arguments),
   '/registerThird': (context) => RegisterThirdPage(),
 };
 

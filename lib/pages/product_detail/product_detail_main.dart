@@ -38,7 +38,6 @@ class _ProductDetailMainState extends State<ProductDetailMain> {
   void initState() {
     super.initState();
     _productContent = widget._productContentList[0];
-    // print(_productContent.toJson() is Map);
     _attr = _productContent.attr;
     _initAttr();
     // 监听广播
@@ -234,6 +233,7 @@ class _ProductDetailMainState extends State<ProductDetailMain> {
   // 属性选择
   List<Widget> _getAttrWidget(setBottomState) {
     List<Widget> attrList = [];
+    print('arrtLen: ${_attr.length}');
     _attr.forEach((attrItem) {
       attrList.add(Wrap(
         children: [
@@ -256,6 +256,7 @@ class _ProductDetailMainState extends State<ProductDetailMain> {
         ],
       ));
     });
+    print('attrListLen: ${attrList.length}');
     return attrList;
   }
 
@@ -287,14 +288,20 @@ class _ProductDetailMainState extends State<ProductDetailMain> {
   void _initAttr() {
     //注意attrList属性需要在model中定义
     var attr = _attr;
+    print('attrlen: ${attr.length}');
     for (var i = 0; i < attr.length; i++) {
       for (var j = 0; j < attr[i].list.length; j++) {
         // 第一个属性默认选中
-        if (j == 0) {
-          attr[i].attrList.add({"title": attr[i].list[j], "checked": true});
-        } else {
-          attr[i].attrList.add({"title": attr[i].list[j], "checked": false});
+        // attr[i].attrList.length != attr[i].list.length  避免重复被add
+        if (attr[i].attrList.length != attr[i].list.length) {
+          if (j == 0) {
+            attr[i].attrList.add({"title": attr[i].list[j], "checked": true});
+          } else {
+            attr[i].attrList.add({"title": attr[i].list[j], "checked": false});
+          }
         }
+
+        print('${attr[i].attrList}');
       }
     }
     _getSelectedAttrValue();
@@ -311,11 +318,14 @@ class _ProductDetailMainState extends State<ProductDetailMain> {
         }
       }
     }
+    print('init');
+    print('$tempArr');
     setState(() {
       _selectedValue = tempArr.join(',');
       // 赋值选中的属性到实例中去
       _productContent.selectedAttr = _selectedValue;
     });
+    print('$_selectedValue');
   }
 
   // 点击属性
