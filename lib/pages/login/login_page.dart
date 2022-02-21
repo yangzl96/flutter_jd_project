@@ -1,6 +1,13 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:jd_project/config/index.dart';
+import 'package:jd_project/utils/Stroage.dart';
 import 'package:jd_project/utils/autoSize.dart';
+import 'package:jd_project/utils/eventBus.dart';
+import 'package:jd_project/utils/toast.dart';
 import 'package:jd_project/widgets/button/index.dart';
 import 'package:jd_project/widgets/text/jd_text.dart';
 
@@ -12,6 +19,13 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  @override
+  void dispose() {
+    super.dispose();
+    eventBus.fire(UserEvent('登录成功'));
+  }
+  String username = "";
+  String password = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
             JdText(
               text: '请输入用户名',
               onChanged: (value) {
-                print(value);
+                username = value;
               },
             ),
             const SizedBox(
@@ -60,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
               text: '请输入密码',
               password: true,
               onChanged: (value) {
-                print(value);
+                password = value;
               },
             ),
             const SizedBox(
@@ -70,7 +84,7 @@ class _LoginPageState extends State<LoginPage> {
               padding: EdgeInsets.all(AutoSize.w(20)),
               child: Stack(
                 children: [
-                  Align(
+                  const Align(
                     alignment: Alignment.centerLeft,
                     child: Text('忘记密码'),
                   ),
@@ -93,11 +107,32 @@ class _LoginPageState extends State<LoginPage> {
               text: '登录',
               color: Colors.red,
               height: 74,
-              cb: () {},
+              cb: doLogin,
             )
           ],
         ),
       ),
     );
+  }
+
+  doLogin() async {
+    RegExp reg = RegExp(r"^1\d{10}");
+    if (!reg.hasMatch(username)) {
+      ShowToast.toast('手机号格式不正确');
+    } else if (password.length < 6) {
+      ShowToast.toast('密码不正确');
+    } else {
+      var api = '${Config.domain}api/doLogin';
+      var response = await Dio()
+          .post(api, data: {"username": username, "password": this.password});
+      if (response.data["success"]) {
+        print(response.data);
+        //保存用户信息
+        Storage.setString('userInfo', json.encode(response.data["userinfo"]));
+        Navigator.pop(context);
+      } else {
+        ShowToast.toast('${response.data["message"]}');
+      }
+    }
   }
 }

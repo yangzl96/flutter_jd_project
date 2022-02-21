@@ -129,7 +129,8 @@ class _RegisterSecondPageState extends State<RegisterSecondPage> {
     var api = '${Config.domain}api/validateCode';
     var response = await Dio().post(api, data: {"tel": tel, "code": code});
     if (response.data["success"]) {
-      Navigator.pushNamed(context, '/registerThird');
+      Navigator.pushNamed(context, '/registerThird',
+          arguments: {"tel": tel, "code": code});
     } else {
       ShowToast.toast('${response.data["message"]}');
     }

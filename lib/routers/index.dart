@@ -23,7 +23,7 @@ final routes = {
   '/registerFirst': (context) => RegisterFirstPage(),
   '/registerSecond': (context, {arguments}) =>
       RegisterSecondPage(arguments: arguments),
-  '/registerThird': (context) => RegisterThirdPage(),
+  '/registerThird': (context, {arguments}) => RegisterThirdPage(arguments: arguments),
 };
 
 // 固定写法

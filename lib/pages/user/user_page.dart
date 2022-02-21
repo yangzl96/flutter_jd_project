@@ -4,6 +4,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:jd_project/utils/autoSize.dart';
+import 'package:jd_project/utils/eventBus.dart';
+import 'package:jd_project/utils/userUtils.dart';
+import 'package:jd_project/widgets/button/index.dart';
 
 class UserPage extends StatefulWidget {
   UserPage({Key? key}) : super(key: key);
@@ -12,6 +15,18 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
+  bool _isLogin = false;
+  List _userInfo = [];
+  @override
+  void initState() {
+    super.initState();
+    _getUserInfo();
+    // 监听登录成功的时候
+    eventBus.on<UserEvent>().listen((event) {
+      _getUserInfo();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,33 +50,36 @@ class _UserPageState extends State<UserPage> {
                   decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       image: DecorationImage(
-                          image: AssetImage('images/user.png'),
+                          image: AssetImage(
+                              _isLogin ? 'images/aaa.jpeg' : 'images/user.png'),
                           fit: BoxFit.cover))),
-              Expanded(
-                flex: 1,
-                child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).pushNamed('/login');
-                    },
-                    child:
-                        Text("登录/注册", style: TextStyle(color: Colors.white))),
-              ),
-
-              // Expanded(
-              //   flex: 1,
-              //   child: Column(
-              //     mainAxisAlignment: MainAxisAlignment.center,
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: <Widget>[
-              //       Text("用户名：124124125",
-              //           style: TextStyle(
-              //               color: Colors.white, fontSize: AutoSize.sp(32))),
-              //       Text("普通会员",
-              //           style: TextStyle(
-              //               color: Colors.white, fontSize: AutoSize.sp(24))),
-              //     ],
-              //   ),
-              // )
+              !_isLogin
+                  ? Expanded(
+                      flex: 1,
+                      child: InkWell(
+                          onTap: () {
+                            Navigator.of(context).pushNamed('/login');
+                          },
+                          child: Text("登录/注册",
+                              style: TextStyle(color: Colors.white))),
+                    )
+                  : Expanded(
+                      flex: 1,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text("用户名：${_userInfo[0]['username']}",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: AutoSize.sp(32))),
+                          Text("普通会员",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: AutoSize.sp(24))),
+                        ],
+                      ),
+                    )
             ],
           ),
         ),
@@ -93,7 +111,32 @@ class _UserPageState extends State<UserPage> {
           title: Text("在线客服"),
         ),
         Divider(),
+        SizedBox(
+          height: AutoSize.h(40),
+        ),
+        _isLogin
+            ? ButtonWidget(
+                text: '退出登录',
+                color: Colors.red,
+                cb: () {
+                  UserServices.loginOut();
+                  _getUserInfo();
+                },
+              )
+            : Container()
       ],
     ));
+  }
+
+  // 获取用户信息
+  void _getUserInfo() async {
+    var isLogin = await UserServices.getUserLoginState();
+    var userInfo = await UserServices.getUserInfo();
+    print(isLogin);
+    print(userInfo);
+    setState(() {
+      _userInfo = userInfo;
+      _isLogin = isLogin;
+    });
   }
 }
