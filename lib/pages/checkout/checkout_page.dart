@@ -28,19 +28,37 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 color: Colors.white,
                 child: Column(
                   children: [
-                    ListTile(
-                      leading: Icon(Icons.add_location),
-                      title: Center(
-                        child: Text("请添加收货地址"),
-                      ),
-                      trailing: Icon(Icons.navigate_next),
+                    InkWell(
                       onTap: () {
                         Navigator.pushNamed(context, '/addressList');
                       },
+                      child: Container(
+                        height: AutoSize.h(120),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(Icons.add_location),
+                            Text("请添加收货地址"),
+                            Icon(Icons.navigate_next)
+                          ],
+                        ),
+                      ),
                     ),
+                    // ListTile(
+                    //   leading: Icon(Icons.add_location),
+                    //   title: Center(
+                    //     child: Text("请添加收货地址"),
+                    //   ),
+                    //   trailing: Icon(Icons.navigate_next),
+                    //   onTap: () {
+                    //     Navigator.pushNamed(context, '/addressList');
+                    //   },
+                    // ),
                     // SizedBox(
                     //   height: 10,
                     // ),
+
                     // ListTile(
                     //   title: Column(
                     //     crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,9 +72,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
                     //   ),
                     //   trailing: Icon(Icons.navigate_next),
                     // ),
-                    SizedBox(
-                      height: 10,
-                    )
+                    // SizedBox(
+                    //   height: 10,
+                    // )
                   ],
                 ),
               ),

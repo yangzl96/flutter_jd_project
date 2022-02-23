@@ -42,6 +42,7 @@ dependencies:
   provider: ^5.0.0
   event_bus: ^2.0.0
   fluttertoast: ^8.0.3
+  city_pickers: ^1.0.1
 
 
 dev_dependencies:

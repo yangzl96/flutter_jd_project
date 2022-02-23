@@ -5,17 +5,22 @@ class JdText extends StatelessWidget {
   final String text;
   final bool password;
   var onChanged;
+  final int height;
+  final int maxLines;
   JdText(
       {Key? key,
       this.text = '输入内容',
       this.password = false,
-      this.onChanged = null})
+      this.onChanged = null,
+      this.maxLines = 1,
+      this.height = 68})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       child: TextField(
+          maxLines: 1,
           onChanged: onChanged,
           obscureText: password,
           cursorColor: Colors.red,
@@ -24,7 +29,7 @@ class JdText extends StatelessWidget {
               border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),
                   borderSide: BorderSide.none))),
-      height: AutoSize.h(68),
+      height: AutoSize.h(height),
       decoration: const BoxDecoration(
           border: Border(bottom: BorderSide(width: 1, color: Colors.black12))),
     );
