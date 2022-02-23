@@ -3,6 +3,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:jd_project/provider/Cart.dart';
+import 'package:jd_project/provider/Checkout.dart';
 import 'package:jd_project/provider/Counter.dart';
 import 'package:jd_project/routers/index.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -31,7 +32,8 @@ class _MyAppState extends State<MyApp> {
         builder: () => MultiProvider(
               providers: [
                 ChangeNotifierProvider(create: (_) => Counter()),
-                ChangeNotifierProvider(create: (_) => Cart())
+                ChangeNotifierProvider(create: (_) => Cart()),
+                ChangeNotifierProvider(create: (_) => CheckOut())
               ],
               child: MaterialApp(
                   debugShowCheckedModeBanner: false,

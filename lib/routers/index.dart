@@ -1,7 +1,11 @@
 // ignore_for_file: prefer_function_declarations_over_variables
 
 import 'package:flutter/material.dart';
+import 'package:jd_project/pages/address/address_add.dart';
+import 'package:jd_project/pages/address/address_edit.dart';
+import 'package:jd_project/pages/address/address_list.dart';
 import 'package:jd_project/pages/cart/cart_page.dart';
+import 'package:jd_project/pages/checkout/checkout_page.dart';
 import 'package:jd_project/pages/login/login_page.dart';
 import 'package:jd_project/pages/product_detail/product_detail_page.dart';
 import 'package:jd_project/pages/register/register_first.dart';
@@ -23,7 +27,12 @@ final routes = {
   '/registerFirst': (context) => RegisterFirstPage(),
   '/registerSecond': (context, {arguments}) =>
       RegisterSecondPage(arguments: arguments),
-  '/registerThird': (context, {arguments}) => RegisterThirdPage(arguments: arguments),
+  '/checkout': (context) => CheckoutPage(),
+  '/registerThird': (context, {arguments}) =>
+      RegisterThirdPage(arguments: arguments),
+  '/addressAdd': (context) => AddressAddPage(),
+  '/addressEdit': (context) => AddressEditPage(),
+  '/addressList': (context) => AddressListPage(),
 };
 
 // 固定写法

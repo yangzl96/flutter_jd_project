@@ -3,7 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:jd_project/pages/cart/cart_item.dart';
 import 'package:jd_project/provider/Cart.dart';
+import 'package:jd_project/provider/Checkout.dart';
 import 'package:jd_project/utils/autoSize.dart';
+import 'package:jd_project/utils/cart.dart';
+import 'package:jd_project/utils/toast.dart';
+import 'package:jd_project/utils/userUtils.dart';
 import 'package:provider/provider.dart';
 
 class CartPage extends StatefulWidget {
@@ -16,6 +20,7 @@ class CartPage extends StatefulWidget {
 class _CartPageState extends State<CartPage> {
   // 是否编辑
   bool _isEdit = false;
+  var checkOutProvider;
   @override
   void initState() {
     super.initState();
@@ -25,6 +30,7 @@ class _CartPageState extends State<CartPage> {
   Widget build(BuildContext context) {
     // 获取provider cart
     var cartProvider = Provider.of<Cart>(context);
+    checkOutProvider = Provider.of<CheckOut>(context);
     return Scaffold(
         appBar: AppBar(
           title: const Text('购物车'),
@@ -96,7 +102,7 @@ class _CartPageState extends State<CartPage> {
                                       child: Align(
                                         alignment: Alignment.centerRight,
                                         child: ElevatedButton(
-                                            onPressed: () {},
+                                            onPressed: doCheckOut,
                                             child: Text(
                                               '结算',
                                               style: TextStyle(
@@ -154,5 +160,24 @@ class _CartPageState extends State<CartPage> {
             : Center(
                 child: Text('购物车空空如也 ~'),
               ));
+  }
+
+  // 结算
+  void doCheckOut() async {
+    // 获取购物车中选中的数据
+    List checkOutData = await CartUtils.getCheckOutData();
+    // 保存购物车选中的数据
+    checkOutProvider.changeCheckOutListData(checkOutData);
+    if (checkOutData.isNotEmpty) {
+      var loginState = await UserServices.getUserLoginState();
+      if (loginState) {
+        Navigator.of(context).pushNamed('/checkout');
+      } else {
+        ShowToast.toast('请先登录');
+        Navigator.of(context).pushNamed('/login');
+      }
+    } else {
+      ShowToast.toast('购物车没有选中的数据');
+    }
   }
 }
