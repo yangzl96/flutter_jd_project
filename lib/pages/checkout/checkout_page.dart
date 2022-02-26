@@ -1,8 +1,13 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:jd_project/config/index.dart';
 import 'package:jd_project/provider/Checkout.dart';
 import 'package:jd_project/utils/autoSize.dart';
+import 'package:jd_project/utils/eventBus.dart';
+import 'package:jd_project/utils/signUtils.dart';
+import 'package:jd_project/utils/userUtils.dart';
 import 'package:provider/provider.dart';
 
 class CheckoutPage extends StatefulWidget {
@@ -13,6 +18,18 @@ class CheckoutPage extends StatefulWidget {
 }
 
 class _CheckoutPageState extends State<CheckoutPage> {
+  List _addressList = [];
+  @override
+  void initState() {
+    super.initState();
+    _getDefaultAddress();
+
+    //监听广播
+    eventBus.on<CheckOutEvent>().listen((event) {
+      _getDefaultAddress();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var checkOutProvider = Provider.of<CheckOut>(context);
@@ -28,53 +45,53 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 color: Colors.white,
                 child: Column(
                   children: [
-                    InkWell(
-                      onTap: () {
-                        Navigator.pushNamed(context, '/addressList');
-                      },
-                      child: Container(
-                        height: AutoSize.h(120),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(Icons.add_location),
-                            Text("请添加收货地址"),
-                            Icon(Icons.navigate_next)
-                          ],
-                        ),
-                      ),
-                    ),
-                    // ListTile(
-                    //   leading: Icon(Icons.add_location),
-                    //   title: Center(
-                    //     child: Text("请添加收货地址"),
-                    //   ),
-                    //   trailing: Icon(Icons.navigate_next),
-                    //   onTap: () {
-                    //     Navigator.pushNamed(context, '/addressList');
-                    //   },
-                    // ),
-                    // SizedBox(
-                    //   height: 10,
-                    // ),
-
-                    // ListTile(
-                    //   title: Column(
-                    //     crossAxisAlignment: CrossAxisAlignment.start,
-                    //     children: [
-                    //       Text('张三 18878787878'),
-                    //       SizedBox(
-                    //         height: 10,
-                    //       ),
-                    //       Text('萨达萨达所所')
-                    //     ],
-                    //   ),
-                    //   trailing: Icon(Icons.navigate_next),
-                    // ),
-                    // SizedBox(
-                    //   height: 10,
-                    // )
+                    _addressList.isNotEmpty
+                        ? InkWell(
+                            child: Container(
+                                padding: EdgeInsets.all(AutoSize.w(20)),
+                                height: AutoSize.h(120),
+                                width: double.infinity,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                            "${_addressList[0]["name"]}  ${_addressList[0]["phone"]}"),
+                                        SizedBox(height: 10),
+                                        Text("${_addressList[0]["address"]}"),
+                                      ],
+                                    ),
+                                    Icon(Icons.navigate_next)
+                                  ],
+                                )),
+                            onTap: () {
+                              Navigator.of(context).pushNamed('/addressList');
+                            },
+                          )
+                        : InkWell(
+                            onTap: () {
+                              Navigator.pushNamed(context, '/addressAdd');
+                            },
+                            child: Container(
+                              height: AutoSize.h(120),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.add_location),
+                                  Text("请添加收货地址"),
+                                  Icon(Icons.navigate_next)
+                                ],
+                              ),
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -185,5 +202,17 @@ class _CheckoutPageState extends State<CheckoutPage> {
             ))
       ],
     );
+  }
+
+  void _getDefaultAddress() async {
+    List userinfo = await UserServices.getUserInfo();
+    var tempJson = {"uid": userinfo[0]["_id"], "salt": userinfo[0]["salt"]};
+    var sign = SignUtils.getSign(tempJson);
+    var api =
+        '${Config.domain}api/oneAddressList?uid=${userinfo[0]["_id"]}&sign=${sign}';
+    var response = await Dio().get(api);
+    setState(() {
+      _addressList = response.data['result'];
+    });
   }
 }

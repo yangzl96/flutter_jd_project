@@ -31,7 +31,7 @@ final routes = {
   '/registerThird': (context, {arguments}) =>
       RegisterThirdPage(arguments: arguments),
   '/addressAdd': (context) => AddressAddPage(),
-  '/addressEdit': (context) => AddressEditPage(),
+  '/addressEdit': (context, { arguments }) => AddressEditPage(arguments: arguments),
   '/addressList': (context) => AddressListPage(),
 };
 

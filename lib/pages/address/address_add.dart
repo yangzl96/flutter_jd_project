@@ -1,6 +1,11 @@
 import 'package:city_pickers/city_pickers.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:jd_project/config/index.dart';
 import 'package:jd_project/utils/autoSize.dart';
+import 'package:jd_project/utils/eventBus.dart';
+import 'package:jd_project/utils/signUtils.dart';
+import 'package:jd_project/utils/userUtils.dart';
 import 'package:jd_project/widgets/button/index.dart';
 import 'package:jd_project/widgets/text/jd_text.dart';
 
@@ -13,6 +18,16 @@ class AddressAddPage extends StatefulWidget {
 
 class _AddressAddPageState extends State<AddressAddPage> {
   String area = '';
+  String name = '';
+  String phone = '';
+  String address = '';
+
+  @override
+  dispose() {
+    super.dispose();
+    eventBus.fire(AddressEvent('增加成功...'));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,10 +43,16 @@ class _AddressAddPageState extends State<AddressAddPage> {
             ),
             JdText(
               text: "收货人姓名",
+              onChanged: (v) {
+                name = v;
+              },
             ),
             const SizedBox(height: 10),
             JdText(
               text: "收货人电话",
+              onChanged: (v) {
+                phone = v;
+              },
             ),
             // const SizedBox(height: 10),
             Container(
@@ -51,12 +72,12 @@ class _AddressAddPageState extends State<AddressAddPage> {
                         confirmWidget: const Text("确定",
                             style: TextStyle(color: Colors.blue)));
 
-                    setState(() {
-                      if (result != null) {
+                    if (result != null) {
+                      setState(() {
                         area =
                             "${result.provinceName}/${result.cityName}/${result.areaName}";
-                      }
-                    });
+                      });
+                    }
                   },
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -71,17 +92,47 @@ class _AddressAddPageState extends State<AddressAddPage> {
                           : Text('省/市/区',
                               style: TextStyle(
                                   color: Colors.black54,
-                                  fontSize: AutoSize.sp(32)))
+                                  fontSize: AutoSize.sp(28)))
                     ],
                   )),
             ),
             const SizedBox(
               height: 10,
             ),
-            JdText(text: '详细地址', maxLines: 4, height: 200),
+            JdText(
+                text: '详细地址',
+                maxLines: 4,
+                height: 200,
+                onChanged: (v) {
+                  address = '$area + $v';
+                }),
             const SizedBox(height: 10),
             const SizedBox(height: 40),
-            ButtonWidget(text: "增加", color: Colors.red)
+            ButtonWidget(
+              text: "增加",
+              color: Colors.red,
+              cb: () async {
+                List userInfo = await UserServices.getUserInfo();
+                var tempJson = {
+                  "uid": userInfo[0]["_id"],
+                  "name": name,
+                  "phone": phone,
+                  "address": address,
+                  "salt": userInfo[0]["salt"]
+                };
+                // 签名
+                var sign = SignUtils.getSign(tempJson);
+                var api = '${Config.domain}api/addAddress';
+                var result = await Dio().post(api, data: {
+                  "uid": userInfo[0]["_id"],
+                  "name": name,
+                  "phone": phone,
+                  "address": address,
+                  "sign": sign
+                });
+                Navigator.pop(context);
+              },
+            )
           ],
         ),
       ),

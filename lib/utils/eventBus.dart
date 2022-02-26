@@ -17,3 +17,16 @@ class UserEvent {
   String str;
   UserEvent(this.str);
 }
+
+//收货地址广播
+class AddressEvent{
+  String str;
+  AddressEvent(this.str);
+}
+
+
+//结算页面
+class CheckOutEvent{
+  String str;
+  CheckOutEvent(this.str);
+}

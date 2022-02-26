@@ -192,7 +192,7 @@ class _SearchPageState extends State<SearchPage> {
         builder: (context) {
           return AlertDialog(
             actionsAlignment: MainAxisAlignment.center,
-            title: Text('提示信息！'),
+            title: Center(child: Text('提示信息！')),
             content: Text('确定要删除该记录吗?'),
             actions: [
               TextButton(
