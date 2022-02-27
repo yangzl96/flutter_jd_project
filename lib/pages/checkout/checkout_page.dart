@@ -1,12 +1,17 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:jd_project/config/index.dart';
+import 'package:jd_project/provider/Cart.dart';
 import 'package:jd_project/provider/Checkout.dart';
 import 'package:jd_project/utils/autoSize.dart';
+import 'package:jd_project/utils/checkoutUtils.dart';
 import 'package:jd_project/utils/eventBus.dart';
 import 'package:jd_project/utils/signUtils.dart';
+import 'package:jd_project/utils/toast.dart';
 import 'package:jd_project/utils/userUtils.dart';
 import 'package:provider/provider.dart';
 
@@ -33,6 +38,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   @override
   Widget build(BuildContext context) {
     var checkOutProvider = Provider.of<CheckOut>(context);
+    var cartProvider = Provider.of<Cart>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('结算'),
@@ -156,7 +162,50 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                     backgroundColor:
                                         MaterialStateProperty.all(Colors.red)),
                                 child: Text('立即下单'),
-                                onPressed: () {}),
+                                onPressed: () async {
+                                  if (_addressList.isNotEmpty) {
+                                    List userinfo =
+                                        await UserServices.getUserInfo();
+                                    // 计算下单总价 保留一位小数
+                                    var allPrice = CheckOutUtils.getAllPrice(
+                                            checkOutProvider.checkOutListData)
+                                        .toStringAsFixed(1);
+                                    // 签名数据
+                                    var sign = SignUtils.getSign({
+                                      "uid": userinfo[0]["_id"],
+                                      "phone": _addressList[0]["phone"],
+                                      "address": _addressList[0]["address"],
+                                      "name": _addressList[0]["name"],
+                                      "all_price": allPrice,
+                                      "products": json.encode(
+                                          checkOutProvider.checkOutListData),
+                                      "salt": userinfo[0]["salt"]
+                                    });
+                                    var api = '${Config.domain}api/doOrder';
+                                    var response = await Dio().post(api, data: {
+                                      "uid": userinfo[0]["_id"],
+                                      "phone": _addressList[0]["phone"],
+                                      "address": _addressList[0]["address"],
+                                      "name": _addressList[0]["name"],
+                                      "all_price": allPrice,
+                                      "products": json.encode(
+                                          checkOutProvider.checkOutListData),
+                                      "sign": sign
+                                    });
+                                    print(response);
+                                    if (response.data['success']) {
+                                      // 删除购物车选中的商品数据
+                                      await CheckOutUtils
+                                          .removeSelectedCartItem();
+                                      // 更新购物车数据
+                                      cartProvider.updateCartList();
+                                      // 跳转到支付页面
+                                      Navigator.of(context).pushNamed('/pay');
+                                    }
+                                  } else {
+                                    ShowToast.toast('请先添加收货地址');
+                                  }
+                                }),
                           ))
                     ],
                   )))
