@@ -7,6 +7,9 @@ import 'package:jd_project/pages/address/address_list.dart';
 import 'package:jd_project/pages/cart/cart_page.dart';
 import 'package:jd_project/pages/checkout/checkout_page.dart';
 import 'package:jd_project/pages/login/login_page.dart';
+import 'package:jd_project/pages/order/order_info.dart';
+import 'package:jd_project/pages/order/order_page.dart';
+import 'package:jd_project/pages/pay/pay_page.dart';
 import 'package:jd_project/pages/product_detail/product_detail_page.dart';
 import 'package:jd_project/pages/register/register_first.dart';
 import 'package:jd_project/pages/register/register_second.dart';
@@ -31,8 +34,12 @@ final routes = {
   '/registerThird': (context, {arguments}) =>
       RegisterThirdPage(arguments: arguments),
   '/addressAdd': (context) => AddressAddPage(),
-  '/addressEdit': (context, { arguments }) => AddressEditPage(arguments: arguments),
+  '/addressEdit': (context, {arguments}) =>
+      AddressEditPage(arguments: arguments),
   '/addressList': (context) => AddressListPage(),
+  '/pay': (context) => PayPage(),
+  '/order': (context) => OrderPage(),
+  '/orderInfo': (context) => OrderInfoPage(),
 };
 
 // 固定写法
