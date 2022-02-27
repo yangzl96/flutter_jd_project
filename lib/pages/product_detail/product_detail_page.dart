@@ -6,7 +6,7 @@ import 'package:jd_project/pages/product_detail/product_detail_info.dart';
 import 'package:jd_project/pages/product_detail/product_detail_main.dart';
 import 'package:jd_project/provider/Cart.dart';
 import 'package:jd_project/utils/autoSize.dart';
-import 'package:jd_project/utils/cart.dart';
+import 'package:jd_project/utils/cartUtils.dart';
 import 'package:jd_project/utils/eventBus.dart';
 import 'package:jd_project/utils/toast.dart';
 import 'package:jd_project/widgets/button/index.dart';
